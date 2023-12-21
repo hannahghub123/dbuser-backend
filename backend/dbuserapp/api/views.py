@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from dbuserapp.models import User
+from rest_framework.views import APIView
+
 
 @api_view(['POST'])
 def register(request):
@@ -69,73 +71,63 @@ def login_view(request):
     return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_document(request):
-    if request.method == 'POST':
-        document_title = request.data.get('documentTitle')
-        document_content = request.data.get('documentContent')
-        user_id = request.data.get('id')
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def add_document(request):
+#     if request.method == 'POST':
+#         document_title = request.data.get('documentTitle')
+#         document_content = request.data.get('documentContent')
+#         user_id = request.data.get('id')
 
-        try:
-            user_obj = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#         try:
+#             user_obj = User.objects.get(id=user_id)
+#         except User.DoesNotExist:
+#             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Create a new document for the user
-        document_obj = Documents.objects.create(user=user_obj, title=document_title, content=document_content)
+#         # Create a new document for the user
+#         document_obj = Documents.objects.create(user=user_obj, title=document_title, content=document_content)
 
-        # Serialize the document object
-        # serializer = DocumentSerializer(document_obj)
+#         return Response({'message': 'Document created successfully'}, status=status.HTTP_201_CREATED)
 
-        return Response({'message': 'Document created successfully'}, status=status.HTTP_201_CREATED)
+#     return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_documents(request):
-    if request.method == 'POST':
-        user_id = request.data.get('id')
+# @permission_classes([IsAuthenticated])
+# class GetDocuments(APIView):
+#     def post(self, request):
+#         user_id = request.data.get('id')
 
-        try:
-            user_obj = User.objects.get(id=user_id)
-            print(user_obj,"//////////////////////")
-        except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#         try:
+#             user_obj = User.objects.get(id=user_id)
+#         except User.DoesNotExist:
+#             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Create a new document for the user
-        document_obj = Documents.objects.filter(user=user_obj)
-        print(document_obj,"..>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",document_obj.values())
+#         # Create a new document for the user
+#         document_obj = Documents.objects.filter(user=user_obj)
 
-        # Serialize the document object
-        serializer = DocumentSerializer(document_obj, many=True)
+#         # Serialize the document object
+#         serializer = DocumentSerializer(document_obj, many=True)
 
-        return Response({'message': 'Document obtained successfully', 'documents':serializer.data}, status=status.HTTP_201_CREATED)
+#         return Response({'message': 'Document obtained successfully', 'documents':serializer.data}, status=status.HTTP_201_CREATED)
 
-    return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def delete_document(request):
-    if request.method == 'POST':
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def delete_document(request):
+#     if request.method == 'POST':
         
-        try:
-            # print("here i am////////////////////////",doc_id)
-            # document_obj = Documents.objects.get(doc_id=doc_id)
-            # print(document_obj,"//////////////////////***")
-            doc_id = request.data.get('id')
-            object_id = ObjectId(doc_id)
-            documentobj = Documents.objects.get(_id=object_id)
+#         try:
+#             doc_id = request.data.get('id')
+#             object_id = ObjectId(doc_id)
+#             documentobj = Documents.objects.get(_id=object_id)
 
-            documentobj.delete()
+#             documentobj.delete()
 
-        except User.DoesNotExist:
-            return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
+#         except User.DoesNotExist:
+#             return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'message': 'Document deleted successfully'}, status=status.HTTP_201_CREATED)
+#         return Response({'message': 'Document deleted successfully'}, status=status.HTTP_201_CREATED)
 
-    return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+#     return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

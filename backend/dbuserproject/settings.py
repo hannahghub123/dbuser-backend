@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,10 +29,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -42,7 +43,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'dbuserapp',
+    'dbdocuments',
 ]
+
+ASGI_APPLICATION = 'dbuserproject.asgi.application'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -54,6 +58,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+]
+
 
 ROOT_URLCONF = "dbuserproject.urls"
 
@@ -74,10 +83,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "dbuserproject.wsgi.application"
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", 
-]
 
 CORS_ALLOW_CREDENTIALS = True
 

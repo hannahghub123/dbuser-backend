@@ -6,7 +6,4 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = "__all__"
 
-class DocumentSerializer(ModelSerializer):
-    class Meta:
-        model = Documents
-        fields = "__all__"
+
