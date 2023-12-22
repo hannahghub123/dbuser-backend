@@ -1,7 +1,10 @@
 from django.urls import path
-from .consumers import MyDocumentsConsumer
+from dbdocuments.consumers import MyDocumentConsumer
+
+
 
 websocket_urlpatterns = [
-    path('ws/documents/', MyDocumentsConsumer.as_asgi()),
+
+    path('ws/documents/', MyDocumentConsumer.as_asgi()),
     # Add more WebSocket URL patterns if needed
 ]

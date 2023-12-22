@@ -51,13 +51,17 @@ ASGI_APPLICATION = 'dbuserproject.asgi.application'
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Make sure this is placed before CommonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development, you may want to restrict this in production
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 

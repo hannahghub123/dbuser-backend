@@ -1,6 +1,8 @@
+import json
 from django.db import models
 from djongo import models as djongo_models
 from dbuserapp.models import *
+from django.core.serializers import serialize
 
 class Documents(models.Model):
     _id = djongo_models.ObjectIdField(primary_key=True)
@@ -14,11 +16,5 @@ class Documents(models.Model):
         return f"{self.user}-{self.title}"
     
     def to_json(self):
-        return {
-            '_id': str(self._id),
-            'user': self.user.username,  # or any other field you want to include
-            'title': self.title,
-            'content': self.content,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
-        }
+        serialized_data = serialize('json', [self], use_natural_primary_keys=True)
+        return json.loads(serialized_data)[0]['fields']
