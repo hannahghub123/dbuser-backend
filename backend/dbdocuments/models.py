@@ -1,7 +1,7 @@
 import json
 from django.db import models
 from djongo import models as djongo_models
-from dbuserapp.models import *
+from django.contrib.auth.models import User 
 from django.core.serializers import serialize
 
 class Documents(models.Model):

@@ -1,33 +1,46 @@
-from bson import ObjectId
+# from bson import ObjectId
 from django.contrib.auth import authenticate, login, logout
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
-from rest_framework.response import Response
+# from rest_framework_simplejwt.tokens import RefreshToken
+# from rest_framework import status
+# from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import *
-from dbuserapp.models import User
+# from .serializers import *
+# from dbuserapp.models import User
 from rest_framework.views import APIView
+
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer  
+from rest_framework.decorators import permission_classes
+
+from dbdocuments.models import *
+from dbdocuments.api.serializers import *
 
 
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
-        # Get data from the request
         username = request.data.get('username')
         email = request.data.get('email')
         password1 = request.data.get('password1')
         password2 = request.data.get('password2')
 
-        # Validate passwords
         if password1 != password2:
             return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a new user
+        # Validate unique username and email
+        if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+            return Response({'error': 'Username or email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new user with hashed password
         try:
-            print(username,password1,password2,email)
-            User.objects.create(username=username, email=email, password=password1)
+            user = User.objects.create_user(username=username, email=email, password=password1)
             print("User created successfully")
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -40,24 +53,20 @@ def register(request):
 @api_view(['POST'])
 def login_view(request):
     if request.method == 'POST':
-        # Get data from the request
         username = request.data.get('username')
         password = request.data.get('password')
 
-        # Authenticate user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Log in the user
             login(request, user)
-            
-            # Generate JWT tokens
+
+            # Use DRF Token or JWT for token generation
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            userobj = User.objects.get(username=username, password=password)
-
-            serialized_data = UserSerializer(userobj)
+            # Use DRF Serializer for user serialization
+            serialized_data = UserSerializer(user)
 
             return Response({
                 'access_token': access_token,
@@ -69,7 +78,6 @@ def login_view(request):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
     return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 # @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -92,23 +100,23 @@ def login_view(request):
 #     return Response({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @permission_classes([IsAuthenticated])
-# class GetDocuments(APIView):
-#     def post(self, request):
-#         user_id = request.data.get('id')
+@permission_classes([IsAuthenticated])
+class GetDocuments(APIView):
+    def post(self, request):
+        user_id = request.data.get('id')
+        print(user_id,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk/////////////////////////////")
+        try:
+            user_obj = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-#         try:
-#             user_obj = User.objects.get(id=user_id)
-#         except User.DoesNotExist:
-#             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        # Create a new document for the user
+        document_obj = Documents.objects.filter(user=user_obj)
 
-#         # Create a new document for the user
-#         document_obj = Documents.objects.filter(user=user_obj)
+        # Serialize the document object
+        serializer = DocumentSerializer(document_obj, many=True)
 
-#         # Serialize the document object
-#         serializer = DocumentSerializer(document_obj, many=True)
-
-#         return Response({'message': 'Document obtained successfully', 'documents':serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Document obtained successfully', 'documents':serializer.data}, status=status.HTTP_201_CREATED)
 
 # @api_view(['POST'])
 # @permission_classes([IsAuthenticated])

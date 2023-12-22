@@ -2,10 +2,10 @@
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+from channels.db import database_sync_to_async
 from .api.serializers import DocumentSerializer
 from  .models import Documents
-from dbuserapp.models import User
+from django.contrib.auth.models import User
 from asgiref.sync import sync_to_async
 
 class MyDocumentConsumer(AsyncWebsocketConsumer):
@@ -32,25 +32,8 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             # Handle deleting a document
             await self.delete_document(data)
 
-    async def send_documents(self, user_id):
-        print('heree in send',user_id)
-        try:
-            print('here in tryy')
-            user_obj = await sync_to_async(User.objects.get)(id=user_id)
-            print('hi',user_obj)
-            documentsobj = await sync_to_async(Documents.objects.filter)(user=user_obj)
-            print(documentsobj)
-            serialized = DocumentSerializer(documentsobj)
-            print('here in tryy',user_obj,documentsobj,serialized.data)
-            response_data = {
-                'action': 'document_displayed',
-                'message': 'Document displayed successfully',
-                'documents' : serialized.data
-            }
-            await self.send(text_data=json.dumps(response_data))
-
-        except Exception as e:
-            print("errorrrr",e,"////////////////////in send")
+    async def send_documents(self, userId):
+        pass
 
 
     async def add_document(self, data):
@@ -74,6 +57,8 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
                 'documents' : serialized.data
             }
             await self.send(text_data=json.dumps(response_data))
+
+            # await self.send_documents(userId)
 
         except Exception as e:
             print("errorrrr",e,"////////////////////")

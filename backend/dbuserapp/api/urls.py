@@ -6,7 +6,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
 
     # path('add-documents/',add_document, name='add-document'),
-    # path('getdocuments/',GetDocuments.as_view(), name='getdocuments'),
+    path('get-documents/',GetDocuments.as_view(), name='getdocuments'),
     # path('delete-documents/',delete_document, name='delete-document'),
 
 
