@@ -16,5 +16,11 @@ class Documents(models.Model):
         return f"{self.user}-{self.title}"
     
     def to_json(self):
-        serialized_data = serialize('json', [self], use_natural_primary_keys=True)
-        return json.loads(serialized_data)[0]['fields']
+        fields = {
+            'user': str(self.user),
+            'title': self.title,
+            'content': self.content,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }
+        return fields
