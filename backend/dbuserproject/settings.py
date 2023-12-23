@@ -123,6 +123,8 @@ DATABASES = {
     }
 }
 
+# 'host': 'mongodb+srv://hannaelsajoy:e7ppc7ECWu0ediUw@dbuser.e36zclr.mongodb.net/?retryWrites=true&w=majority',
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",

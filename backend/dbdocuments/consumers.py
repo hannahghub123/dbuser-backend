@@ -26,7 +26,6 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
     def get_user_documents(self, user_id):
         user = User.objects.get(id=user_id)
         documents = Documents.objects.filter(user=user)
-        print(documents,"###################################################################################################3")
         return documents if documents.exists() else None
 
     async def connect(self):
@@ -58,11 +57,9 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
           
 
     async def add_document(self, data):
-        print(data, "dataaaaa///////////////////////")
         action = data.get('action')
 
         document_data = data.get('documentData', {})
-        print(document_data, "dataaaaa///////////////////////in add")
 
         title = document_data.get('title')
         content = document_data.get('content')
@@ -105,7 +102,7 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             # )
 
         except Exception as e:
-            print("errorrrr",e,"////////////////////")
+            print("errorrrr",e)
 
     @sync_to_async
     def edit_document_sync(self, document_data):
@@ -122,7 +119,6 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             document.save()
 
             userId = document_data.get('userId')
-            print(userId,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
             response_data = {
                 'action': 'documents_edited',
@@ -132,13 +128,11 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             return response_data,userId
         
         except Exception as e:
-            print("errorrrr",e,"////////////////////")
+            print("errorrrr",e)
 
 
     async def edit_document(self, data):
-        print(data,"DATAAAAAAAAAAAAAAAAAAAA&&&&&&&&&&&&&&&&&&&&&&")
         document_data = data.get('documentData', {})
-        print(document_data, "dataaaaa///////////////////////in add")
 
         try:
             response,userId = await self.edit_document_sync(document_data)
@@ -173,7 +167,7 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             )
 
         except Exception as e:
-            print("errorrrr",e,"////////////////////")
+            print("errorrrr",e)
 
 
     @sync_to_async
@@ -182,7 +176,6 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             # Filter documents based on the user ID
             document = Documents.objects.get(_id=documentId)
             userId = document.user.id
-            print(userId,"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&7#########################################////////")
             document.delete()
 
             response_data = {
@@ -239,7 +232,7 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             )
 
         except Exception as e:
-            print("errorrrr", e, "////////////////////")
+            print("errorrrr", e)
             response_data = {
                 'action': 'delete_document_failed',
                 'message': 'An error occurred while deleting the document.',
@@ -307,10 +300,8 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(response_data))
 
         except Exception as e:
-            print("errorrrr",e,"////////////////////in geteditdoc")
-
-
-    
+            print("errorrrr",e)
+  
 
     @sync_to_async
     def get_all_documents_sync(self):
@@ -341,8 +332,6 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             # Retrieve the user ID from the data
             # user_id = data.get('userId')
 
-            print(data,"yyyyyyyyyyyyyyyyyyyyyy222222222222222222222>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
             # Fetch documents asynchronously using sync_to_async
             response_data = await self.get_all_documents_sync()
 
@@ -357,4 +346,4 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(response_data))
 
     async def disconnect(self, close_code):
-        print("websocket disconnected///////////", close_code)
+        print("websocket disconnected", close_code)
