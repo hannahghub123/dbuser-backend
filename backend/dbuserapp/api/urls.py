@@ -4,12 +4,13 @@ from .views import *
 urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
+    path('confirm-otp/',ConfirmOTP.as_view(), name='confirm-otp'),
+    path('reset-password/',Resetpassword.as_view(), name='reset-password'),
+    path('set-password/',Setpassword.as_view(), name='reset-password'),
 
-    # path('add-documents/',add_document, name='add-document'),
     path('get-documents/',GetDocuments.as_view(), name='getdocuments'),
-    # path('delete-documents/',delete_document, name='delete-document'),
 
 
     path('logout/',logout_view,name="logout"),
-    path('token/refresh/', token_refresh_view, name='token_refresh'),
+    # path('token/refresh/', token_refresh_view, name='token_refresh'),
 ]
