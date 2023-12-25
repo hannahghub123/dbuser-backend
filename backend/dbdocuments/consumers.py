@@ -219,7 +219,7 @@ class MyDocumentConsumer(AsyncWebsocketConsumer):
 
             # Send a response back to the original sender
             await self.send(text_data=json.dumps({
-                "message": "document deleted",
+                "message": "documents_deleted",
             }))
 
             # Send a message to the group (other users)
